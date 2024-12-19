@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   label: {
-    fontSize: 18,
+    fontSize: 20,
   },
   button: {
     backgroundColor: "#3399FF",
@@ -245,8 +245,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   resultLabel: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 20
   },
   bmiValue: {
     fontSize: 20,

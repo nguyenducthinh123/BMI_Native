@@ -12,6 +12,8 @@ const BMIScreen = () => {
   // const [location, setLocation] = useState(null);
   const [statusColor, setStatusColor] = useState(getStatusColor("Normal"));
   const navigation = useNavigation();
+  const [showBMIInfo, setShowBMIInfo] = useState(false);
+  const [showStatusInfo, setShowStatusInfo] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -152,16 +154,36 @@ const BMIScreen = () => {
         </View>
 
         {/* BMI */}
-        <View style={styles.resultRow}>
-          <Text style={styles.resultLabel}>Your BMI:</Text>
-          <Text style={styles.bmiValue}>{bmi}</Text>
-        </View>
+        <TouchableOpacity onPressIn={() => setShowBMIInfo(true)} onPressOut={() => setShowBMIInfo(false)}>
+          <View style={styles.resultRow}>
+            <Text style={styles.resultLabel}>Your BMI:</Text>
+            <Text style={styles.bmiValue}>{bmi}</Text>
+          </View>
+        </TouchableOpacity>
+        {showBMIInfo && (
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>BMI = w/h² (w in kg, h in meters)</Text>
+          </View>
+        )}
 
         {/* Status */}
-        <View style={styles.resultRow}>
-          <Text style={styles.resultLabel}>Status:</Text>
-          <Text style={[styles.status, { color: statusColor }]}>{status}</Text>
-        </View>
+        <TouchableOpacity onPressIn={() => setShowStatusInfo(true)} onPressOut={() => setShowStatusInfo(false)}>
+          <View style={styles.resultRow}>
+            <Text style={styles.resultLabel}>Status:</Text>
+            <Text style={[styles.status, { color: statusColor }]}>{status}</Text>
+          </View>
+        </TouchableOpacity>
+        {showStatusInfo && (
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>
+              Status is determined by BMI value:
+              {"\n"}- Underweight: BMI &lt; 18.5
+              {"\n"}- Normal: 18.5 ≤ BMI &lt; 25
+              {"\n"}- Overweight: 25 ≤ BMI &lt; 30
+              {"\n"}- Obese: BMI ≥ 30
+            </Text>
+          </View>
+        )}
 
         {/* Navigation Buttons */}
         <View style={styles.navigationRow}>
@@ -271,6 +293,16 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
+  infoBox: {
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  infoText: {
+    fontSize: 16,
+    color: "#333",
+  }
 });
 
 export default BMIScreen;

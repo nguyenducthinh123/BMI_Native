@@ -8,7 +8,7 @@ export default function AuthorScreen() {
       <Text style={styles.info}>Name: Nguyễn Đức Thịnh</Text>
       <Text style={styles.info}>Student ID: 20240179E</Text>
       <Text style={styles.info}>Course: Web and Mobile Applications programming</Text>
-      <Text style={styles.info}>Completion Date: 20/12/2024</Text>
+      <Text style={styles.info}>Completion Date: 31/12/2024</Text>
     </View>
   );
 }

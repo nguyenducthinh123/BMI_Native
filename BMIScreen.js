@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert, TouchableWithoutFeedback, Keyboard, TouchableOpacity, Text } from "react-native";
+import { View, Alert, TouchableWithoutFeedback, Keyboard, TouchableOpacity, Text, Vibration } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import Title from './Title';
-import Input from './Input';
-import Result from './Result';
+import InputItem from './InputItem';
+import ResultItem from './ResultItem';
 import styles from './styles';
 
 const BMIScreen = () => {
@@ -31,10 +31,10 @@ const BMIScreen = () => {
     })();
   }, []);
 
-  // Update status color when status changes
+  // Update color when status changes
   useEffect(() => {
     setStatusColor(getStatusColor(status));
-    // console.log('change color');
+    // console.log('Change color');
   }, [status]);
 
   function calculateBMI(weight, height) {
@@ -78,24 +78,84 @@ const BMIScreen = () => {
 
     let logs = await AsyncStorage.getItem('bmiLogs');
     logs = logs ? JSON.parse(logs) : [];
-    logs.unshift(log); // Add new log to the beginning of the array
-    if (logs.length > 10) logs.pop(); // Keep only the latest 10 logs
+    logs.unshift(log);
+    if (logs.length > 10) logs.pop();
     await AsyncStorage.setItem('bmiLogs', JSON.stringify(logs));
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Title />
-        <Input weight={weight} setWeight={setWeight} height={height} setHeight={setHeight} updateBMI={updateBMI} />
-        <Result
-          bmi={bmi}
-          status={status}
-          statusColor={statusColor}
-          showBMIInfo={showBMIInfo}
-          setShowBMIInfo={setShowBMIInfo}
-          showStatusInfo={showStatusInfo}
-          setShowStatusInfo={setShowStatusInfo}
+        <Title/>
+        <InputItem
+          label="Enter weight (kg):"
+          value={weight}
+          onChange={(value) => {
+            const newWeight = parseInt(value, 10) || 1;
+            if (newWeight > 0 && newWeight < Number.MAX_SAFE_INTEGER) {
+              setWeight(newWeight);
+              updateBMI(newWeight, height);
+            }
+          }}
+          onIncrease={() => {
+            Vibration.vibrate(100);
+            const newWeight = weight + 1;
+            if (newWeight > 0 && newWeight < Number.MAX_SAFE_INTEGER) {
+              setWeight(newWeight);
+              updateBMI(newWeight, height);
+            }
+          }}
+          onDecrease={() => {
+            Vibration.vibrate(100);
+            const newWeight = weight - 1;
+            if (newWeight > 0 && newWeight < Number.MAX_SAFE_INTEGER) {
+              setWeight(newWeight);
+              updateBMI(newWeight, height);
+            }
+          }}
+        />
+        <InputItem
+          label="Enter height (cm):"
+          value={height}
+          onChange={(value) => {
+            const newHeight = parseInt(value, 10) || 1;
+            if (newHeight > 0 && newHeight < Number.MAX_SAFE_INTEGER) {
+              setHeight(newHeight);
+              updateBMI(weight, newHeight);
+            }
+          }}
+          onIncrease={() => {
+            Vibration.vibrate(100);
+            const newHeight = height + 1;
+            if (newHeight > 0 && newHeight < Number.MAX_SAFE_INTEGER) {
+              setHeight(newHeight);
+              updateBMI(weight, newHeight);
+            }
+          }}
+          onDecrease={() => {
+            Vibration.vibrate(100);
+            const newHeight = height - 1;
+            if (newHeight > 0 && newHeight < Number.MAX_SAFE_INTEGER) {
+              setHeight(newHeight);
+              updateBMI(weight, newHeight);
+            }
+          }}
+        />
+        <ResultItem
+          label="Your BMI:"
+          value={bmi}
+          color="#008000"
+          showInfo={showBMIInfo}
+          setShowInfo={setShowBMIInfo}
+          infoText="BMI = weight (kg) / height² (m²)"
+        />
+        <ResultItem
+          label="Status:"
+          value={status}
+          color={statusColor}
+          showInfo={showStatusInfo}
+          setShowInfo={setShowStatusInfo}
+          infoText={`Status is determined by BMI value:\n- Underweight: BMI < 18.5\n- Normal: 18.5 ≤ BMI < 25\n- Overweight: 25 ≤ BMI < 30\n- Obese: BMI ≥ 30`}
         />
         <View style={styles.navigationRow}>
           <TouchableOpacity onPress={() => navigation.navigate('ExplainScreen')} style={styles.navButton}>
